@@ -1,0 +1,7 @@
+tag,familia,modelo,imgsz,conf_bola,quadros,fps_processamento,jogadores_por_quadro,pessoas_por_quadro_sem_filtro,ids_unicos_pessoas,pct_quadros_com_bola,candidatas_bola_por_quadro_com_bola,conf_media_bola,bola_pct_yolo_apos_filtro_gramado,bola_quadros_aceitos_gating,bola_quadros_kalman,bola_pct_cobertura_final,k,tracks_time0,tracks_time1,tracks_outros,tracks_sem_time
+n_1280,coco,yolov8n.pt,1280,0.1,900,9.89,14.97,17.37,288,78.8,1.64,0.267,66.7,267,618,98.3,2,175,132,0,30
+s_1280,coco,yolov8s.pt,1280,0.1,900,4.81,16.19,21.12,247,58.7,1.37,0.225,40.9,195,624,91.0,2,128,129,0,31
+m_1280,coco,yolov8m.pt,1280,0.1,900,2.1,15.47,19.31,168,57.3,1.31,0.256,35.4,198,565,84.8,2,95,74,0,34
+m_640,coco,yolov8m.pt,640,0.1,900,4.78,15.88,15.88,111,23.9,1.07,0.212,13.7,113,422,59.4,2,70,54,0,20
+m_1280_cb005,coco,yolov8m.pt,1280,0.05,900,1.54,15.47,15.47,168,80.9,1.71,0.171,54.2,268,580,94.2,2,84,88,0,35
+m_1280_k3,coco,yolov8m.pt,1280,0.1,900,1.63,15.47,15.47,168,57.3,1.31,0.256,35.4,198,565,84.8,3,73,68,47,35

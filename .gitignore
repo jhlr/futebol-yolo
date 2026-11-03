@@ -1,0 +1,12 @@
+.venv/
+__pycache__/
+*.pyc
+dados/
+*.mp4
+*.mkv
+*.mov
+*.avi
+*.webm
+*.pt
+saidas/**/rastreado*.mp4
+.DS_Store

@@ -1,0 +1,45 @@
+{
+  "quadros_validos": 4672,
+  "minutos_validos": 2.6,
+  "ids_unicos_pessoas": 854,
+  "altura_mediana_pessoa_px": 59.0,
+  "pessoas_por_quadro_media": 14.7,
+  "ids_por_pessoa_visivel": 58.09,
+  "duracao_mediana_track_s": 0.9,
+  "tracks_curtos_menos_de_1s": 436,
+  "reaparicoes_provaveis": 322,
+  "reaparicoes_por_minuto_valido": 124.06,
+  "reaparicoes_mesmo_time": 267,
+  "reaparicoes_entre_tracks_de_1s_ou_mais": 114,
+  "reaparicoes_longas_por_minuto_valido": 43.92,
+  "tracks_de_2s_ou_mais": 317,
+  "pct_linhas_em_tracks_de_2s_ou_mais": 91.6,
+  "conf_media_tracks_curtos": 0.51,
+  "conf_media_tracks_de_2s_ou_mais": 0.71,
+  "janela_quadros": 20,
+  "raio_px": 80.0,
+  "classes": {
+    "person": 854
+  },
+  "times_por_track": {
+    "-1.0": 40,
+    "0.0": 471,
+    "1.0": 343
+  },
+  "camera_desloc_mediana_px_por_quadro": 5.6,
+  "camera_desloc_p90_px_por_quadro": 14.3,
+  "camera_desloc_max_px_por_quadro": 147.6,
+  "pct_linhas_sem_time": 0.97,
+  "times_bgr": {
+    "0": [
+      113,
+      173,
+      175
+    ],
+    "1": [
+      69,
+      71,
+      133
+    ]
+  }
+}

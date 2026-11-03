@@ -1,0 +1,17 @@
+{
+  "quadros_total": 10800,
+  "quadros_validos": 4672,
+  "quadros_com_deteccao_yolo": 1763,
+  "candidatas_yolo_quadros_validos": 3535,
+  "candidatas_yolo_todos_os_quadros": 9542,
+  "candidatas_apos_filtro_gramado": 2262,
+  "pct_deteccao_yolo_sobre_validos": 37.7,
+  "quadros_detectada_apos_gating": 1022,
+  "quadros_preenchidos_kalman": 2893,
+  "pct_cobertura_final_sobre_validos": 83.8,
+  "candidatas_rejeitadas_gating": 1260,
+  "bola_largura_mediana_px": 10.0,
+  "bola_altura_mediana_px": 9.0,
+  "gate": 6.0,
+  "max_lacuna": 15
+}

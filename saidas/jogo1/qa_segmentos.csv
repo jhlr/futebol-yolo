@@ -1,0 +1,8 @@
+segmento,frame_ini,frame_fim,pes_projetados,fracao_dentro_do_campo,aprovado
+8,723,1284,8166,0.976,True
+9,1366,2207,13036,0.962,True
+10,2209,3203,16990,0.964,True
+12,3214,3480,3617,0.904,True
+13,3482,4007,6577,0.084,False
+19,7242,8515,16300,0.933,True
+22,9762,10493,10571,0.996,True

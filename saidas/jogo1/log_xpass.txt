@@ -1,0 +1,21 @@
+73 passes (41.1% certos) — 73 deste trecho, 0 extras
+Coeficientes (features padronizadas): {'distancia': np.float64(-0.619), 'adversarios_na_linha': np.float64(0.319), 'pressao_passador': np.float64(0.011), 'espaco_destino': np.float64(1.507), 'progressao_x': np.float64(-0.077), 'dist_destino_gol': np.float64(-0.203)}
+
+                      AUC-ROC (↑)  Brier (↓)  Log-Loss (↓)  Avg Precision (↑)  média prevista  taxa observada
+heuristico                  0.650      0.353         0.974              0.660           0.682           0.411
+baseline (distância)        0.360      0.251         0.696              0.355           0.409           0.411
+logistico                   0.825      0.172         0.518              0.699           0.412           0.411
+
+Passes acima do esperado (PAx):
+ passador  time  passes  certos  eXP  PAx
+    21589     0       3       3 1.29 1.71
+    22663     0       1       1 0.16 0.84
+     4473     0       1       1 0.20 0.80
+    22368     0       1       1 0.22 0.78
+    21788     0       1       1 0.29 0.71
+    18348     0       1       1 0.36 0.64
+    15111     0       1       1 0.39 0.61
+     1818     0       1       1 0.42 0.58
+Superfície salva em ../saidas/jogo1/figuras/superficie_xp_f914.png
+
+What-if: ganho médio de eXP 0.434 (88% dos passes errados com ganho > 0,10)

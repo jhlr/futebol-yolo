@@ -1,0 +1,28 @@
+{
+  "video": "../dados/videos/brasil_marrocos_20-26min.mp4",
+  "modelo": "/Users/joaorietra/Developer/p3-futebol-yolo/modelos/yolov8m.pt",
+  "device": "mps",
+  "fps": 30.0,
+  "largura": 1280,
+  "altura": 720,
+  "n_frames": 900,
+  "inicio_s": 49.999999998,
+  "imgsz": 1280,
+  "conf": 0.3,
+  "conf_bola": 0.05,
+  "k": 2,
+  "filtro_gramado": true,
+  "fps_processamento": 1.5394207292581727,
+  "times_bgr": {
+    "0": [
+      79,
+      81,
+      146
+    ],
+    "1": [
+      83,
+      150,
+      152
+    ]
+  }
+}

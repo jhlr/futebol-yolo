@@ -1,0 +1,28 @@
+{
+  "video": "../dados/videos/brasil_marrocos_20-26min.mp4",
+  "modelo": "../modelos/yolov8n.pt",
+  "device": "mps",
+  "fps": 30.0,
+  "largura": 1280,
+  "altura": 720,
+  "n_frames": 1260,
+  "inicio_s": 0.0,
+  "imgsz": 1280,
+  "conf": 0.3,
+  "conf_bola": 0.1,
+  "k": 2,
+  "filtro_gramado": true,
+  "fps_processamento": 18.570464553158125,
+  "times_bgr": {
+    "0": [
+      114,
+      175,
+      177
+    ],
+    "1": [
+      74,
+      81,
+      141
+    ]
+  }
+}

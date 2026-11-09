@@ -110,7 +110,7 @@ def main() -> None:
     figd = pasta / "figuras"
     figd.mkdir(exist_ok=True)
 
-    meta = json.loads((pasta / "meta.json").read_text())
+    meta = json.loads((pasta / "meta.json").read_text(encoding="utf-8"))
     fps, W, H = float(meta["fps"]), int(meta["largura"]), int(meta["altura"])
     tracks = pd.read_csv(pasta / "tracks.csv")
     pessoas = tracks[tracks["classe"] != "bola"]
@@ -157,7 +157,7 @@ def main() -> None:
     }
     if len(re_longas):
         re_longas.to_csv(pasta / "reaparicoes_provaveis.csv", index=False)
-    (pasta / "tracking_resumo.json").write_text(json.dumps(resumo, indent=2, ensure_ascii=False))
+    (pasta / "tracking_resumo.json").write_text(json.dumps(resumo, indent=2, ensure_ascii=False), encoding="utf-8")
 
     # IDs novos ao longo do tempo (cada barra = 10 s do clipe)
     fig, ax = plt.subplots(figsize=(11, 3.4))

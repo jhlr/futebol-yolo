@@ -31,7 +31,7 @@ def main() -> None:
     ap.add_argument("--saida", required=True)
     a = ap.parse_args()
     pasta = Path(a.saida)
-    meta = json.loads((pasta / "meta.json").read_text())
+    meta = json.loads((pasta / "meta.json").read_text(encoding="utf-8"))
     tr = pd.read_csv(pasta / "tracks.csv")
     pes = {int(f): g for f, g in tr[tr["classe"] != "bola"].groupby("frame")}
     bola = pd.read_csv(pasta / "bola.csv").set_index("frame")

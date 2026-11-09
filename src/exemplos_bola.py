@@ -70,7 +70,7 @@ def main() -> None:
     ap.add_argument("--sufixo", default="", help="Sufixo do nome do mosaico de candidatas aleatórias")
     a = ap.parse_args()
     pasta = Path(a.saida)
-    meta = json.loads((pasta / "meta.json").read_text())
+    meta = json.loads((pasta / "meta.json").read_text(encoding="utf-8"))
     cap = cv2.VideoCapture(a.video or meta["video"])
     off = round(float(meta["inicio_s"]) * float(meta["fps"]))
     rng = np.random.default_rng(a.semente)

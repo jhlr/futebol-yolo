@@ -108,7 +108,7 @@ def escanear(video: Path, saida: Path, passo_s: float, limiar_corte: float) -> N
         "segundos_pouco_gramado": [round(float(t), 1) for t in
                                    df.loc[df["gramado_metade_baixa"] < 0.5, "t_s"]],
     }
-    (saida / "resumo_escaneamento.json").write_text(json.dumps(resumo, indent=2, ensure_ascii=False))
+    (saida / "resumo_escaneamento.json").write_text(json.dumps(resumo, indent=2, ensure_ascii=False), encoding="utf-8")
     print(json.dumps(resumo, indent=2, ensure_ascii=False))
 
 

@@ -30,7 +30,7 @@ def main() -> None:
     ap.add_argument("--quadros", type=int, nargs="*", default=None)
     a = ap.parse_args()
     pasta = Path(a.saida)
-    meta = json.loads((pasta / "meta.json").read_text())
+    meta = json.loads((pasta / "meta.json").read_text(encoding="utf-8"))
     Ht = projecao_por_quadro(pasta)
     quadros = a.quadros
     if quadros is None:    # meio de cada segmento aprovado

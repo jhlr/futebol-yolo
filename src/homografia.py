@@ -90,7 +90,7 @@ def projecao_por_quadro(pasta: Path, com_refino: bool = True) -> Mat:
     linhas do campo foi aceito (`refino_linhas.py`). Quem projeta, desenha grade ou
     calcula área visível deve chamar esta função em vez de combinar H0 e G à mão.
     """
-    cal = json.loads((pasta / "calibracao.json").read_text())
+    cal = json.loads((pasta / "calibracao.json").read_text(encoding="utf-8"))
     G = np.load(pasta / "camera.npy")
     H = np.array(cal["H0"], dtype=np.float64) @ G
     refino = cal.get("refino_linhas")
@@ -184,7 +184,7 @@ def movimento_camera(pasta: Path, limiar_corte: float, margem_placar: float,
                      min_inliers: int = 150, min_inliers_ancora: int = 80,
                      passo_banco: int = 30, min_quadros_ref: int = 90) -> None:
     """Estima G_t (quadro t → quadro de referência) por segmento válido, com re-ancoragem."""
-    meta = json.loads((pasta / "meta.json").read_text())
+    meta = json.loads((pasta / "meta.json").read_text(encoding="utf-8"))
     tracks = pd.read_csv(pasta / "tracks.csv")
     pessoas = tracks[tracks["classe"] != "bola"]
     caixas_por_frame = {int(f): g[["x1", "y1", "x2", "y2"]].to_numpy(dtype=float)
@@ -370,7 +370,7 @@ def movimento_camera(pasta: Path, limiar_corte: float, margem_placar: float,
         "falhas_cadeia": falhas_chain,
         "quadros_chave_no_banco": len(banco),
     }
-    (pasta / "camera_info.json").write_text(json.dumps(info, indent=2, ensure_ascii=False))
+    (pasta / "camera_info.json").write_text(json.dumps(info, indent=2, ensure_ascii=False), encoding="utf-8")
     print(f"Homografias salvas em {pasta/'camera.npy'}: {info['quadros_validos']}/{n} quadros válidos "
           f"({info['pct_validos']}%), {len(segmentos)} segmentos, quadro de referência = {frame_ref}")
     for s in segmentos:
@@ -425,12 +425,12 @@ def _desenhar_grade(img: np.ndarray, Hcampo_pixel: Mat) -> np.ndarray:
 
 def calibrar(pasta: Path, marcos: list[str], sem_janela: bool, frame_clique: int) -> None:
     arq = pasta / "calibracao.json"
-    meta = json.loads((pasta / "meta.json").read_text())
+    meta = json.loads((pasta / "meta.json").read_text(encoding="utf-8"))
     G = _carregar_camera(pasta)
 
     pontos: list[dict[str, Any]]
     if sem_janela:
-        cal = json.loads(arq.read_text())
+        cal = json.loads(arq.read_text(encoding="utf-8"))
         if "pontos" in cal:
             pontos = cal["pontos"]
         else:   # formato antigo: quadro 0
@@ -467,9 +467,9 @@ def calibrar(pasta: Path, marcos: list[str], sem_janela: bool, frame_clique: int
     for p, e, s in zip(pontos, erro, src):
         p["pixel_ref"] = [float(s[0]), float(s[1])]
         p["erro_reprojecao_m"] = float(e)
-    json.dump({"pontos": pontos, "H0": H0.tolist(), "erro_reprojecao_m": erro.tolist(),
-               "erro_medio_m": float(erro.mean()), "erro_max_m": float(erro.max())},
-              open(arq, "w"), indent=2)
+    arq.write_text(json.dumps({"pontos": pontos, "H0": H0.tolist(), "erro_reprojecao_m": erro.tolist(),
+                               "erro_medio_m": float(erro.mean()), "erro_max_m": float(erro.max())},
+                              indent=2), encoding="utf-8")
     print(f"H0 salva em {arq}")
     for p, e in zip(pontos, erro):
         print(f"  {p['marco']:18s} quadro {p['frame']:5d}  erro = {e:.2f} m")
@@ -478,7 +478,7 @@ def calibrar(pasta: Path, marcos: list[str], sem_janela: bool, frame_clique: int
                   "erro_m": [round(float(e), 2) for e in erro]}).to_csv(pasta / "calibracao_erros.csv", index=False)
 
     # Imagens de conferência: grade do campo reprojetada sobre cada quadro de calibração
-    if G is not None and not json.loads((pasta / "camera_info.json").read_text()).get("qa_feito"):
+    if G is not None and not json.loads((pasta / "camera_info.json").read_text(encoding="utf-8")).get("qa_feito"):
         qa_segmentos(pasta, H0, G)
     Hinv = np.linalg.inv(H0)
     for k, f in enumerate(sorted({int(p["frame"]) for p in pontos})):
@@ -527,12 +527,12 @@ def qa_segmentos(pasta: Path, H0: Mat, G: Mat, minimo: float = 0.7) -> None:
     tab.to_csv(pasta / "qa_segmentos.csv", index=False)
     np.save(pasta / "camera.npy", G)
     qv.to_csv(pasta / "quadros_validos.csv", index=False)
-    info = json.loads((pasta / "camera_info.json").read_text())
+    info = json.loads((pasta / "camera_info.json").read_text(encoding="utf-8"))
     info["qa_feito"] = True
     info["quadros_validos_apos_qa"] = int(qv["valido"].sum())
     info["pct_validos_apos_qa"] = round(100.0 * float(qv["valido"].mean()), 1)
     info["segmentos_reprovados_qa"] = int((~tab["aprovado"]).sum()) if len(tab) else 0
-    (pasta / "camera_info.json").write_text(json.dumps(info, indent=2, ensure_ascii=False))
+    (pasta / "camera_info.json").write_text(json.dumps(info, indent=2, ensure_ascii=False), encoding="utf-8")
     print("QA da projeção por segmento (pés dentro do campo):")
     print(tab.to_string(index=False))
     print(f"Quadros válidos após o QA: {info['quadros_validos_apos_qa']} ({info['pct_validos_apos_qa']}%)")
@@ -541,7 +541,7 @@ def qa_segmentos(pasta: Path, H0: Mat, G: Mat, minimo: float = 0.7) -> None:
 # ── 3. Projeção ────────────────────────────────────────────────────────────
 
 def projetar(pasta: Path, sem_camera: bool) -> None:
-    H0 = np.array(json.loads((pasta / "calibracao.json").read_text())["H0"])
+    H0 = np.array(json.loads((pasta / "calibracao.json").read_text(encoding="utf-8"))["H0"])
     Ht_todos = None if sem_camera else projecao_por_quadro(pasta)
 
     def para_campo(df: pd.DataFrame) -> pd.DataFrame:

@@ -317,7 +317,7 @@ def main() -> None:
     a = ap.parse_args()
 
     pasta = Path(a.saida)
-    meta = json.loads((pasta / "meta.json").read_text())
+    meta = json.loads((pasta / "meta.json").read_text(encoding="utf-8"))
     fps = meta["fps"]
     raio = a.raio_posse or (35.0 if a.pixels else 2.0)
     dist_min = a.dist_min_passe or (40.0 if a.pixels else 3.0)
@@ -359,7 +359,7 @@ def main() -> None:
             "precisao_pct": round(100 * float(pt["sucesso"].mean()), 1) if len(pt) else None,
             "distancia_total": round(float(fis.loc[fis["time"] == t, "distancia"].sum()), 1),
         }
-    (pasta / "metricas_times.json").write_text(json.dumps(resumo, indent=2, ensure_ascii=False))
+    (pasta / "metricas_times.json").write_text(json.dumps(resumo, indent=2, ensure_ascii=False), encoding="utf-8")
     figuras(pasta, jog, p, passes, fps, a.pixels)
     if a.sensibilidade:
         tab = sensibilidade_raio(pasta, jog, bola, [1.0, 2.0, 3.0], a.min_quadros, dist_min,

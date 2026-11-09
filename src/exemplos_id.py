@@ -29,7 +29,7 @@ def main() -> None:
     ap.add_argument("--semente", type=int, default=3)
     a = ap.parse_args()
     pasta = Path(a.saida)
-    meta = json.loads((pasta / "meta.json").read_text())
+    meta = json.loads((pasta / "meta.json").read_text(encoding="utf-8"))
     ev = pd.read_csv(pasta / "reaparicoes_provaveis.csv")
     tr = pd.read_csv(pasta / "tracks.csv")
     rng = np.random.default_rng(a.semente)

@@ -138,7 +138,7 @@ def processar(args: argparse.Namespace) -> None:
                                    cv2.VideoWriter.fourcc(*"mp4v"), fps, (W, H))
 
     clf = ClassificadorTimes(k=args.k)
-    arq = open(saida / "tracks.csv", "w", newline="")
+    arq = open(saida / "tracks.csv", "w", newline="", encoding="utf-8")
     csvw = csv.writer(arq)
     csvw.writerow(["frame", "t_s", "track_id", "classe", "time", "conf",
                    "x1", "y1", "x2", "y2", "px", "py"])
@@ -247,7 +247,7 @@ def processar(args: argparse.Namespace) -> None:
         "fps_processamento": n / duracao if duracao else 0,
         "times_bgr": {str(k): v for k, v in clf.centroides_bgr().items()} if clf.calibrado else {},
     }
-    (saida / "meta.json").write_text(json.dumps(meta, indent=2, ensure_ascii=False))
+    (saida / "meta.json").write_text(json.dumps(meta, indent=2, ensure_ascii=False), encoding="utf-8")
     print(f"\n{n} quadros em {duracao:.1f}s ({meta['fps_processamento']:.1f} fps). Saída: {saida}/")
 
 

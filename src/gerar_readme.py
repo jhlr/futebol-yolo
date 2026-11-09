@@ -41,7 +41,7 @@ def formatar(v: Any, casas: int | None = None) -> str:
 
 
 def valor_json(arq: Path, caminho: str) -> Any:
-    d: Any = json.loads(arq.read_text())
+    d: Any = json.loads(arq.read_text(encoding="utf-8"))
     partes = caminho.split(".")
     while partes:
         if isinstance(d, list):
@@ -110,7 +110,7 @@ def main() -> None:
     ap.add_argument("--destino", required=True)
     a = ap.parse_args()
     base = Path(a.saida)
-    texto = Path(a.modelo).read_text()
+    texto = Path(a.modelo).read_text(encoding="utf-8")
     n = 0
 
     def trocar(m: re.Match[str]) -> str:
@@ -118,7 +118,7 @@ def main() -> None:
         n += 1
         return resolver(m.group(1).strip(), base)
 
-    Path(a.destino).write_text(PADRAO.sub(trocar, texto))
+    Path(a.destino).write_text(PADRAO.sub(trocar, texto), encoding="utf-8", newline="\n")
     print(f"{n} marcadores resolvidos → {a.destino}")
 
 

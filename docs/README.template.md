@@ -30,34 +30,44 @@ a partir dos arquivos gerados. A anotação manual dos passes foi feita pelo gru
 - Vídeo: <https://www.youtube.com/watch?v=vC3fV_awcWE> ("JOGO COMPLETO: BRASIL X MARROCOS", arquivo local 720p, 1280x720, 30 fps, 4 h 04 min).
 - **Trecho usado: 00:20:00 a 00:26:00 do arquivo (6 min).** O enunciado pede 3 a 5 min; **os 6 min foram uma decisão do grupo e
   são um desvio declarado da regra**. O relógio do placar mostra aproximadamente o minuto 6:34 ao 12:34 do 1º tempo (0 x 0).
-- O vídeo **não está no repositório** (só URL e intervalo): o trecho se reproduz cortando 00:20:00 a 00:26:00 do vídeo do YouTube (`src/pipeline.sh`, passo 1).
-- Ambiente: MacBook Apple M1, 16 GB, backend MPS, Python 3.11 em `.venv`.
+- O vídeo **não está no repositório** (só URL e intervalo): o trecho se reproduz cortando 00:20:00 a 00:26:00 do vídeo do YouTube (`src/pipeline.py`, etapa de corte).
+- Ambiente em que rodou: MacBook Apple M1, 16 GB, backend MPS, Python 3.11 em `.venv`. O código não depende de sistema operacional (Windows, macOS e Linux): o backend é escolhido sozinho (CUDA, MPS ou CPU) e o `pipeline.py` roda as etapas com o Python do ambiente ativo.
 
-Comandos executados (de dentro de `src/`; a lista completa e na ordem está em `src/pipeline.sh`):
+Comandos executados (de dentro de `src/`; `python pipeline.py` roda tudo na ordem abaixo, e `python pipeline.py --listar` mostra as etapas):
+
+Preparação (igual nos três sistemas, só muda a linha de ativação; `ffmpeg` precisa estar no PATH):
 
 ```bash
-uv venv --python 3.11 .venv && uv pip install --python .venv/bin/python -r src/requirements.txt
+uv venv --python 3.11 .venv
+# macOS/Linux: source .venv/bin/activate        Windows (PowerShell): .venv\Scripts\Activate.ps1
+uv pip install -r src/requirements.txt
 cd src
+python pipeline.py        # tudo que não depende de humano (as etapas estão listadas abaixo)
+```
+
+Etapas, uma a uma (com o ambiente ativo, de dentro de `src/`; no Windows, se o console mostrar caracteres errados, rode antes `set PYTHONUTF8=1`):
+
+```bash
 ffmpeg -y -ss 00:20:00 -i ../dados/videos/fonte_jogo_completo.mp4 -t 360 -c:v libx264 -preset fast -crf 20 -an ../dados/videos/brasil_marrocos_20-26min.mp4
-../.venv/bin/python escanear_trecho.py --video ../dados/videos/brasil_marrocos_20-26min.mp4 --saida ../saidas/jogo1/escaneamento
-../.venv/bin/python comparar_modelos.py --video ../dados/videos/brasil_marrocos_20-26min.mp4 --saida ../saidas/jogo1/comparacao --inicio 0.8333333333 --fim 1.3333333333
-../.venv/bin/python detectar_rastrear.py --video ../dados/videos/brasil_marrocos_20-26min.mp4 --saida ../saidas/jogo1 --modelo ../modelos/yolov8m.pt
-../.venv/bin/python homografia.py camera --saida ../saidas/jogo1
-../.venv/bin/python reclassificar_times.py --saida ../saidas/jogo1
-../.venv/bin/python homografia.py calibrar --saida ../saidas/jogo1 --sem-janela
-../.venv/bin/python refino_linhas.py --saida ../saidas/jogo1
-../.venv/bin/python bola_kalman.py --saida ../saidas/jogo1
-../.venv/bin/python exemplos_bola.py --saida ../saidas/jogo1
-../.venv/bin/python homografia.py projetar --saida ../saidas/jogo1
-../.venv/bin/python qa_homografia.py --saida ../saidas/jogo1
-../.venv/bin/python renderizar_video.py --saida ../saidas/jogo1
-../.venv/bin/python analise_tracking.py --saida ../saidas/jogo1
-../.venv/bin/python exemplos_id.py --saida ../saidas/jogo1
-../.venv/bin/python metricas.py --saida ../saidas/jogo1 --sensibilidade
-../.venv/bin/python xpass.py --saida ../saidas/jogo1 --what-if
-../.venv/bin/python extras_taticas.py --saida ../saidas/jogo1
-../.venv/bin/python converter_anotacao.py --xlsx "posse de bola.xlsx" --saida ../saidas/jogo1   # anotação manual (xlsx) para t_s,time,sucesso
-../.venv/bin/python validar_passes.py --saida ../saidas/jogo1 --anotado ../saidas/jogo1/passes_anotados.csv
+python escanear_trecho.py --video ../dados/videos/brasil_marrocos_20-26min.mp4 --saida ../saidas/jogo1/escaneamento
+python comparar_modelos.py --video ../dados/videos/brasil_marrocos_20-26min.mp4 --saida ../saidas/jogo1/comparacao --inicio 0.8333333333 --fim 1.3333333333
+python detectar_rastrear.py --video ../dados/videos/brasil_marrocos_20-26min.mp4 --saida ../saidas/jogo1 --modelo ../modelos/yolov8m.pt
+python homografia.py camera --saida ../saidas/jogo1
+python reclassificar_times.py --saida ../saidas/jogo1
+python homografia.py calibrar --saida ../saidas/jogo1 --sem-janela
+python refino_linhas.py --saida ../saidas/jogo1
+python bola_kalman.py --saida ../saidas/jogo1
+python exemplos_bola.py --saida ../saidas/jogo1
+python homografia.py projetar --saida ../saidas/jogo1
+python qa_homografia.py --saida ../saidas/jogo1
+python renderizar_video.py --saida ../saidas/jogo1
+python analise_tracking.py --saida ../saidas/jogo1
+python exemplos_id.py --saida ../saidas/jogo1
+python metricas.py --saida ../saidas/jogo1 --sensibilidade
+python xpass.py --saida ../saidas/jogo1 --what-if
+python extras_taticas.py --saida ../saidas/jogo1
+python converter_anotacao.py --xlsx "posse de bola.xlsx" --saida ../saidas/jogo1   # anotação manual (xlsx) para t_s,time,sucesso
+python validar_passes.py --saida ../saidas/jogo1 --anotado ../saidas/jogo1/passes_anotados.csv
 ```
 
 Ordem diferente do roteiro: `camera` vem antes de `calibrar` porque a calibração usa marcos de **vários quadros** levados ao

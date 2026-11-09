@@ -34,7 +34,7 @@ from classificador_times import DESCONHECIDO, OUTROS, ClassificadorTimes
 
 
 def reclassificar(pasta: Path, k: int, calib_frames: int) -> None:
-    meta = json.loads((pasta / "meta.json").read_text())
+    meta = json.loads((pasta / "meta.json").read_text(encoding="utf-8"))
     tr = pd.read_csv(pasta / "tracks.csv")
     qv = pd.read_csv(pasta / "quadros_validos.csv")
     valido = qv["valido"].to_numpy(dtype=bool)
@@ -86,7 +86,7 @@ def reclassificar(pasta: Path, k: int, calib_frames: int) -> None:
     meta["k"] = k
     meta["reclassificado"] = True
     meta["calib_quadros_validos"] = calib_frames
-    (pasta / "meta.json").write_text(json.dumps(meta, indent=2, ensure_ascii=False))
+    (pasta / "meta.json").write_text(json.dumps(meta, indent=2, ensure_ascii=False), encoding="utf-8")
     cont = pessoas.assign(time=novo).groupby("track_id")["time"].agg(lambda s: s.mode().iloc[0]).value_counts()
     print(f"centróides BGR: {meta['times_bgr']}")
     print(f"tracks por time: { {int(a): int(b) for a, b in cont.items()} }")

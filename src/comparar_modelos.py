@@ -104,7 +104,7 @@ def kalman(cfg: Config, pasta: Path) -> None:
 
 def resumir(cfg: Config, pasta: Path) -> dict[str, float | str | int]:
     saida = pasta / cfg.tag
-    meta = json.loads((saida / "meta.json").read_text())
+    meta = json.loads((saida / "meta.json").read_text(encoding="utf-8"))
     tr = pd.read_csv(saida / "tracks.csv")
     n = int(meta["n_frames"])
     bola = tr[tr["classe"] == "bola"]
@@ -112,7 +112,7 @@ def resumir(cfg: Config, pasta: Path) -> dict[str, float | str | int]:
     pessoas = todas[marcar_no_campo(tr, meta)[todas.index]]
     por_quadro = pessoas.groupby("frame").size().reindex(range(n), fill_value=0)
     por_quadro_bruto = todas.groupby("frame").size().reindex(range(n), fill_value=0)
-    cob = json.loads((pasta / cfg.tag / "bola_cobertura.json").read_text())
+    cob = json.loads((pasta / cfg.tag / "bola_cobertura.json").read_text(encoding="utf-8"))
     return {
         "tag": cfg.tag, "familia": cfg.familia, "modelo": Path(cfg.modelo).name,
         "imgsz": cfg.imgsz, "conf_bola": cfg.conf_bola, "quadros": n,

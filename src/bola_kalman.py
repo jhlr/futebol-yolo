@@ -189,7 +189,7 @@ def main() -> None:
     a = p.parse_args()
 
     pasta = Path(a.saida)
-    meta = json.loads((pasta / "meta.json").read_text())
+    meta = json.loads((pasta / "meta.json").read_text(encoding="utf-8"))
     tracks = pd.read_csv(pasta / "tracks.csv")
     det = tracks[tracks["classe"] == "bola"][["frame", "px", "py", "conf", "x1", "y1", "x2", "y2"]]
     n_candidatas_yolo = int(len(det))
@@ -228,7 +228,7 @@ def main() -> None:
         "bola_altura_mediana_px": round(float((det["y2"] - det["y1"]).median()), 1) if len(det) else None,
         "gate": a.gate, "max_lacuna": a.max_lacuna,
     }
-    (pasta / "bola_cobertura.json").write_text(json.dumps(cob, indent=2, ensure_ascii=False))
+    (pasta / "bola_cobertura.json").write_text(json.dumps(cob, indent=2, ensure_ascii=False), encoding="utf-8")
     print(f"Quadros válidos          : {n_validos} / {n}")
     print(f"Bola detectada pelo YOLO : {n_q:5d} / {n_validos} quadros válidos ({cob['pct_deteccao_yolo_sobre_validos']}%), "
           f"{n_candidatas_yolo} candidatas ({len(det)} após filtro de gramado)")

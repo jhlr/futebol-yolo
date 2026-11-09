@@ -171,7 +171,7 @@ def comparar_modelos(df: pd.DataFrame, pasta: Path) -> tuple[pd.DataFrame, Any]:
         print("Coeficientes (features padronizadas):",
               {k: round(v, 3) for k, v in coefs.items()})
         (pasta / "xp_coeficientes.json").write_text(json.dumps(
-            {k: round(float(v), 3) for k, v in coefs.items()}, indent=2))
+            {k: round(float(v), 3) for k, v in coefs.items()}, indent=2), encoding="utf-8")
     else:
         print(f"Poucos passes de uma das classes ({n_min}): só o modelo heurístico será avaliado.\n"
               "Junte passes de outros trechos/grupos com --extra.")
@@ -279,7 +279,7 @@ def main() -> None:
 
     pasta = Path(a.saida)
     (pasta / "figuras").mkdir(exist_ok=True)
-    direcao = json.loads((pasta / "metricas_times.json").read_text())["direcao_ataque"]
+    direcao = json.loads((pasta / "metricas_times.json").read_text(encoding="utf-8"))["direcao_ataque"]
     jog = carregar_jogadores(pasta)
     passes = pd.read_csv(pasta / "passes.csv")
     if passes.empty:
@@ -294,7 +294,7 @@ def main() -> None:
     n_ok = int(todos["sucesso"].sum())
     (pasta / "xp_resumo.json").write_text(json.dumps({
         "passes_total": len(todos), "passes_certos": n_ok, "passes_errados": len(todos) - n_ok,
-        "pct_certos": round(100 * float(todos["sucesso"].mean()), 1), "passes_deste_trecho": len(feats)}, indent=2))
+        "pct_certos": round(100 * float(todos["sucesso"].mean()), 1), "passes_deste_trecho": len(feats)}, indent=2), encoding="utf-8")
     todos, modelo = comparar_modelos(todos, pasta)
     feats["eXP"] = todos["eXP"].iloc[:len(feats)].to_numpy()
 
@@ -323,7 +323,7 @@ def main() -> None:
                   f"({(wi['ganho'] > 0.1).mean()*100:.0f}% dos passes errados com ganho > 0,10)")
             (pasta / "what_if_resumo.json").write_text(json.dumps({
                 "passes_errados": int(len(wi)), "ganho_medio_exp": round(float(wi["ganho"].mean()), 3),
-                "pct_ganho_acima_010": round(float((wi["ganho"] > 0.1).mean() * 100), 1)}, indent=2))
+                "pct_ganho_acima_010": round(float((wi["ganho"] > 0.1).mean() * 100), 1)}, indent=2), encoding="utf-8")
 
 
 if __name__ == "__main__":

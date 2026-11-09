@@ -184,7 +184,7 @@ def fracao_inliers(qs: list[QuadroLinhas], A: Mat, modelo: Mat) -> float:
 
 
 def carregar_quadros(pasta: Path, passo: int, H0: Mat, G: Mat, modelo: Mat) -> dict[int, list[QuadroLinhas]]:
-    meta = json.loads((pasta / "meta.json").read_text())
+    meta = json.loads((pasta / "meta.json").read_text(encoding="utf-8"))
     qv = pd.read_csv(pasta / "quadros_validos.csv")
     qv = qv[qv["valido"] & (qv["segmento"] >= 0)]
     tracks = pd.read_csv(pasta / "tracks.csv", usecols=["frame", "x1", "y1", "x2", "y2"])
@@ -223,7 +223,7 @@ def refinar_segmento(qs: list[QuadroLinhas], modelo: Mat, arvore: cKDTree) -> di
 
 
 def figura_antes_depois(pasta: Path, H0: Mat, G: Mat, resultados: dict[int, dict[str, Any]], qv: pd.DataFrame) -> None:
-    meta = json.loads((pasta / "meta.json").read_text())
+    meta = json.loads((pasta / "meta.json").read_text(encoding="utf-8"))
     modelo = pontos_das_linhas(0.4)
     linhas: list[npt.NDArray[np.uint8]] = []
     for seg, r in sorted(resultados.items()):
@@ -258,7 +258,7 @@ def main() -> None:
     pasta: Path = a.saida
 
     arq = pasta / "calibracao.json"
-    cal = json.loads(arq.read_text())
+    cal = json.loads(arq.read_text(encoding="utf-8"))
     H0 = np.array(cal["H0"], dtype=np.float64)
     G = np.load(pasta / "camera.npy")
     modelo = pontos_das_linhas()
@@ -280,7 +280,7 @@ def main() -> None:
                        "sigmas": list(SIGMAS), "limiares_px": list(LIMIARES)},
         "segmentos": {str(s): r for s, r in resultados.items()},
     }
-    arq.write_text(json.dumps(cal, indent=2))
+    arq.write_text(json.dumps(cal, indent=2), encoding="utf-8")
     qv = pd.read_csv(pasta / "quadros_validos.csv")
     figura_antes_depois(pasta, H0, G, resultados, qv)
     print(f"Refino gravado em {arq} (chave refino_linhas) e figuras/refino_antes_depois.jpg")

@@ -44,7 +44,7 @@ CABECALHO = "t_s,time,sucesso\n"
 
 def trechos_validos(pasta: Path) -> list[tuple[float, float, int]]:
     """Intervalos contíguos de quadros válidos (t_ini_s, t_fim_s, segmento)."""
-    meta = json.loads((pasta / "meta.json").read_text())
+    meta = json.loads((pasta / "meta.json").read_text(encoding="utf-8"))
     qv = pd.read_csv(pasta / "quadros_validos.csv")
     fps = float(meta["fps"])
     ok = qv["valido"].to_numpy(dtype=bool)
@@ -66,7 +66,7 @@ def cmd_roteiro(pasta: Path) -> None:
     print(f"Trechos AO VIVO a anotar (tempo de clipe), {len(tr)} trechos, {total:.0f} s no total:")
     for a, b, s in tr:
         print(f"  {int(a // 60)}:{a % 60:04.1f} -> {int(b // 60)}:{b % 60:04.1f}  ({b - a:5.1f} s, segmento {s})")
-    (pasta / "passes_anotados_modelo.csv").write_text(CABECALHO)
+    (pasta / "passes_anotados_modelo.csv").write_text(CABECALHO, encoding="utf-8")
     print(f"\nModelo vazio em {pasta/'passes_anotados_modelo.csv'}  (copie para passes_anotados.csv)")
 
 
@@ -150,7 +150,7 @@ def cmd_passear(pasta: Path, video: Path, saida_csv: Path) -> None:
 
 def cmd_folhas(pasta: Path, video: Path) -> None:
     passes = pd.read_csv(pasta / "passes.csv")
-    meta = json.loads((pasta / "meta.json").read_text())
+    meta = json.loads((pasta / "meta.json").read_text(encoding="utf-8"))
     bola = pd.read_csv(pasta / "bola.csv").set_index("frame")
     out = pasta / "figuras" / "folhas_passes"
     out.mkdir(parents=True, exist_ok=True)

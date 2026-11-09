@@ -213,14 +213,14 @@ def main() -> None:
     figd = pasta / "figuras"
     figd.mkdir(exist_ok=True)
 
-    meta = json.loads((pasta / "meta.json").read_text())
+    meta = json.loads((pasta / "meta.json").read_text(encoding="utf-8"))
     fps = float(meta["fps"])
     Ht_todos = projecao_por_quadro(pasta)
     qv = pd.read_csv(pasta / "quadros_validos.csv")
     jog = carregar_jogadores(pasta)
     passes = pd.read_csv(pasta / "passes.csv")
     posse = pd.read_csv(pasta / "posse_por_quadro.csv")
-    direcao = json.loads((pasta / "metricas_times.json").read_text())["direcao_ataque"]
+    direcao = json.loads((pasta / "metricas_times.json").read_text(encoding="utf-8"))["direcao_ataque"]
 
     ctrl, comp, mapa = controle_e_compacidade(jog, qv, Ht_todos, int(meta["largura"]), int(meta["altura"]), fps)
     ctrl.to_csv(pasta / "controle_campo.csv", index=False)
@@ -263,7 +263,7 @@ def main() -> None:
             "progressivos_certos": int((prog["progressivo"] & (prog["sucesso"] == 1)).sum()),
             "limiar_m": 10.0}
         fig_rede(prog, figd / "rede_passes.png")
-    (pasta / "extras_resumo.json").write_text(json.dumps(resumo, indent=2, ensure_ascii=False))
+    (pasta / "extras_resumo.json").write_text(json.dumps(resumo, indent=2, ensure_ascii=False), encoding="utf-8")
     print(json.dumps(resumo, indent=2, ensure_ascii=False))
 
 

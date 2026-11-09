@@ -38,7 +38,7 @@ def numeros_de_arquivos(raiz: Path, extras: list[Path]) -> list[float]:
             and p.name != "camera.npy"]
     arqs += [p for p in extras if p.exists()]
     for p in arqs:
-        for t in re.findall(r"-?\d+(?:\.\d+)?(?:[eE][-+]?\d+)?", p.read_text(errors="ignore")):
+        for t in re.findall(r"-?\d+(?:\.\d+)?(?:[eE][-+]?\d+)?", p.read_text(encoding="utf-8", errors="ignore")):
             try:
                 pool.append(float(t))
             except ValueError:
@@ -74,7 +74,7 @@ def main() -> None:
     a = ap.parse_args()
 
     pool = numeros_de_arquivos(Path(a.saidas), [Path(e) for e in a.extras])
-    texto = limpar(Path(a.readme).read_text())
+    texto = limpar(Path(a.readme).read_text(encoding="utf-8"))
     sem_origem: list[str] = []
     for m in NUM.finditer(texto):
         tok = m.group(1)

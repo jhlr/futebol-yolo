@@ -69,7 +69,7 @@ def main() -> None:
     gt = pd.read_csv(a.anotado)
     arq_val = pasta / "quadros_validos.csv"
     if arq_val.exists():
-        meta = json.loads((pasta / "meta.json").read_text())
+        meta = json.loads((pasta / "meta.json").read_text(encoding="utf-8"))
         valido = pd.read_csv(arq_val)["valido"].astype(bool)
         valido.attrs["fps"] = float(meta["fps"])
         n_det0, n_gt0 = len(det), len(gt)
@@ -95,7 +95,7 @@ def main() -> None:
            "precisao": round(precisao, 3), "revocacao": round(revocacao, 3), "f1": round(f1, 3),
            "acordo_certo_errado_nos_casados": round(acordo, 3),
            "falsos_positivos": len(fp), "falsos_negativos": len(fn)}
-    (pasta / "validacao_passes.json").write_text(json.dumps(res, indent=2, ensure_ascii=False))
+    (pasta / "validacao_passes.json").write_text(json.dumps(res, indent=2, ensure_ascii=False), encoding="utf-8")
 
     print(f"Detectados: {len(det)} | Anotados: {len(gt)} | Casados: {vp}")
     print(f"Precisão  : {precisao:.2f}")

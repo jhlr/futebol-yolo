@@ -95,7 +95,7 @@ class SoccerMapMini(nn.Module):
 def montar_dataset(pastas: list[Path]) -> tuple[torch.Tensor, torch.Tensor, torch.Tensor]:
     X, idx, y = [], [], []
     for pasta in pastas:
-        direcao = json.loads((pasta / "metricas_times.json").read_text())["direcao_ataque"]
+        direcao = json.loads((pasta / "metricas_times.json").read_text(encoding="utf-8"))["direcao_ataque"]
         jog = carregar_jogadores(pasta)
         for r in pd.read_csv(pasta / "passes.csv").itertuples():
             ataque = direcao[str(r.time)]

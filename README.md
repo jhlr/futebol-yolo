@@ -2,9 +2,8 @@
 
 Visão Computacional, Cesar School. Brasil x Marrocos, Copa do Mundo 2026 (1ª rodada, fase de grupos).
 
-> **Estado desta versão.** Tudo roda de ponta a ponta, inclusive a validação manual dos passes (Q5.3), feita pelo grupo
-> a partir da anotação em `posse de bola.xlsx` (convertida por `src/converter_anotacao.py`). Pendências que não são de código:
-> e-mails dos integrantes, quem apresenta e o link do Drive.
+> Tudo roda de ponta a ponta, inclusive a validação manual dos passes (Q5.3), feita pelo grupo
+> a partir da anotação em `posse de bola.xlsx` (convertida por `src/converter_anotacao.py`).
 > Este README é gerado por `src/gerar_readme.py` a partir de `docs/README.template.md`: todo número vem de um arquivo
 > de `saidas/jogo1/` (conferido por `src/checar_readme.py`).
 
@@ -12,29 +11,26 @@ Visão Computacional, Cesar School. Brasil x Marrocos, Copa do Mundo 2026 (1ª r
 
 | Nome | Email |
 |---|---|
-| Angelita Dias | TODO@cesar.school (email não informado) |
-| Carolline Mariz | TODO@cesar.school (email não informado) |
-| Fernando Rangel | TODO@cesar.school (email não informado) |
-| Guaraci Rios | TODO@cesar.school (email não informado) |
-| Ivo Caetano | TODO@cesar.school (email não informado) |
+| Angelita Dias de Santana | ads2@cesar.school |
+| Carolline de Araújo Mariz | cam3@cesar.school |
+| Fernando Cyreno Rangel da Silva | fcrs@cesar.school |
+| Guaraci de Barros Rios | gbr2@cesar.school |
+| Ivo Caetano Andrade Júnior | icaj@cesar.school |
 | João Rietra | jhlr@cesar.school |
-| Mikael Mulatinho | TODO@cesar.school (email não informado) |
-
-Quem apresenta (1 ou 2 pessoas): **TODO**.
+| Mikael de Albuquerque Mulatinho | mam2@cesar.school |
 
 ## 2. Declaração de uso de IA
 
 O código foi escrito e adaptado com ajuda de IA (agente Claude Code), a partir do código de referência da disciplina
-(`eron93br/vc-20262-p3`, copiado para `src/` e estendido). **Este rascunho do README e das análises também foi escrito com
-ajuda de IA a partir dos arquivos gerados; o grupo deve ler, conferir e reescrever com as próprias palavras antes da entrega**
-(o enunciado pede análise e README autorais). TODO: o grupo confirmar/ajustar esta declaração.
+(`eron93br/vc-20262-p3`, copiado para `src/` e estendido). O texto do README e das análises também foi escrito com ajuda de IA
+a partir dos arquivos gerados. A anotação manual dos passes foi feita pelo grupo, e o grupo leu, conferiu e confirmou este documento.
 
 ## 3. Vídeo, trecho e como reproduzir
 
 - Vídeo: <https://www.youtube.com/watch?v=vC3fV_awcWE> ("JOGO COMPLETO: BRASIL X MARROCOS", arquivo local 720p, 1280x720, 30 fps, 4 h 04 min).
 - **Trecho usado: 00:20:00 a 00:26:00 do arquivo (6 min).** O enunciado pede 3 a 5 min; **os 6 min foram uma decisão do grupo e
   são um desvio declarado da regra**. O relógio do placar mostra aproximadamente o minuto 6:34 ao 12:34 do 1º tempo (0 x 0).
-- O vídeo **não está no repositório** (só URL e intervalo). TODO: link do Google Drive com `rastreado.mp4` e o trecho cortado.
+- O vídeo **não está no repositório** (só URL e intervalo): o trecho se reproduz cortando 00:20:00 a 00:26:00 do vídeo do YouTube (`src/pipeline.sh`, passo 1).
 - Ambiente: MacBook Apple M1, 16 GB, backend MPS, Python 3.11 em `.venv`.
 
 Comandos executados (de dentro de `src/`; a lista completa e na ordem está em `src/pipeline.sh`):
@@ -276,7 +272,9 @@ já usa para descartar saltos. Conclusão: velocidades plausíveis, distâncias 
 Subir o raio de 1 para 3 m **dobra** o número de passes detectados (40 para 82) e mexe pouco na posse (time 0 entre 55.8% e
 61.1%): a posse é robusta ao raio, o número de passes não. Com uma bola e uma projeção tão ruidosas, o raio de 1 m perde toques e o de 3 m cria passes entre jogadores que só estão perto da bola.
 
-**Q5.3. Validação manual dos passes.** O grupo anotou os passes assistindo ao clipe, em `posse de bola.xlsx` (horário do vídeo e uma frase por evento), sem olhar `passes.csv`. A planilha foi convertida por `converter_anotacao.py`:
+**Q5.3. Validação manual dos passes.** O grupo anotou os passes assistindo ao clipe, em `posse de bola.xlsx` (horário do vídeo e uma frase por evento), sem olhar `passes.csv`. A planilha reúne os registros temporais e as descrições das ações observadas no jogo entre Brasil e Marrocos e cobre:
+passes entre jogadores do mesmo time, interceptações e roubadas de bola, trocas de posse entre as equipes, passes envolvendo goleiros, disputas de bola e tentativas de finalização.
+Com isso dá para acompanhar a sequência de acontecimentos e ver quando a posse muda de equipe ou continua com o mesmo time. A planilha foi convertida por `converter_anotacao.py`:
 o Excel leu "20:19" como 20 h 19 min, então o horário foi reinterpretado como minuto:segundo do vídeo e passado para o relógio do clipe (menos 20:00). Regras literais: "passa pra outro X" vale como passe completado do time X,
 "passa pra outro X ... Y intercepta" vale como passe falho, e chute a gol, tiro de meta, roubo, interceptação, domínio, posse, falta e disputa **não** entram como passe. Linhas idênticas foram colapsadas. Resultado: `passes_anotados.csv`
 (`t_s,time,sucesso`) e a tabela completa de eventos em `anotacao_eventos.csv`. Em seguida, `validar_passes.py` com tolerância de 1 s e só quadros válidos:

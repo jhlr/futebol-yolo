@@ -36,6 +36,10 @@ $PY reclassificar_times.py --saida "$SAIDA"
 #    ajuste de H0, QA de projeção por segmento (invalida segmentos implausíveis)
 $PY homografia.py calibrar --saida "$SAIDA" --sem-janela
 
+# 7b. Refino de H por segmento, encaixando o campo nas linhas brancas detectadas (~4 min).
+#     Só vale onde o ganho se confirma em quadros não usados no ajuste; sem isso fica H0.
+caffeinate -i $PY refino_linhas.py --saida "$SAIDA"
+
 # 8. Bola (Kalman por segmento, filtro de gramado), exemplos visuais, projeção ao campo
 $PY bola_kalman.py --saida "$SAIDA"
 $PY exemplos_bola.py --saida "$SAIDA"
@@ -63,6 +67,7 @@ $PY anotar_passes.py roteiro --saida "$SAIDA"
 mkdir -p ../figuras
 cp "$SAIDA"/figuras/*.png ../figuras/ 2>/dev/null || true
 cp -R "$SAIDA"/figuras/qa_homografia ../figuras/ 2>/dev/null || true
+cp "$SAIDA"/figuras/refino_antes_depois.jpg ../figuras/ 2>/dev/null || true
 
 # --- Depende de humano (ver docs/2026-11-02-pendencias-humano.md) ---
 #   $PY anotar_passes.py roteiro --saida "$SAIDA"

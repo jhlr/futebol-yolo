@@ -1,0 +1,12 @@
+{
+  "detectados": 72,
+  "anotados": 43,
+  "casados": 20,
+  "tolerancia_s": 1.0,
+  "precisao": 0.278,
+  "revocacao": 0.465,
+  "f1": 0.348,
+  "acordo_certo_errado_nos_casados": 0.65,
+  "falsos_positivos": 52,
+  "falsos_negativos": 23
+}

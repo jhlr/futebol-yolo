@@ -2,9 +2,9 @@
 
 Visão Computacional, Cesar School. Brasil x Marrocos, Copa do Mundo 2026 (1ª rodada, fase de grupos).
 
-> **Estado desta versão.** Tudo o que não depende de anotação humana está feito e rodou de ponta a ponta.
-> **A validação manual dos passes (Q5.3) está PENDENTE**: nenhum número de precisão/revocação/F1 existe ainda e
-> `passes_anotados.csv` ainda não existe. As seções marcadas **PENDENTE** serão preenchidas depois.
+> **Estado desta versão.** Tudo roda de ponta a ponta, inclusive a validação manual dos passes (Q5.3), feita pelo grupo
+> a partir da anotação em `posse de bola.xlsx` (convertida por `src/converter_anotacao.py`). Pendências que não são de código:
+> e-mails dos integrantes, quem apresenta e o link do Drive.
 > Este README é gerado por `src/gerar_readme.py` a partir de `docs/README.template.md`: todo número vem de um arquivo
 > de `saidas/jogo1/` (conferido por `src/checar_readme.py`).
 
@@ -49,6 +49,7 @@ ffmpeg -y -ss 00:20:00 -i ../dados/videos/fonte_jogo_completo.mp4 -t 360 -c:v li
 ../.venv/bin/python homografia.py camera --saida ../saidas/jogo1
 ../.venv/bin/python reclassificar_times.py --saida ../saidas/jogo1
 ../.venv/bin/python homografia.py calibrar --saida ../saidas/jogo1 --sem-janela
+../.venv/bin/python refino_linhas.py --saida ../saidas/jogo1
 ../.venv/bin/python bola_kalman.py --saida ../saidas/jogo1
 ../.venv/bin/python exemplos_bola.py --saida ../saidas/jogo1
 ../.venv/bin/python homografia.py projetar --saida ../saidas/jogo1
@@ -59,8 +60,8 @@ ffmpeg -y -ss 00:20:00 -i ../dados/videos/fonte_jogo_completo.mp4 -t 360 -c:v li
 ../.venv/bin/python metricas.py --saida ../saidas/jogo1 --sensibilidade
 ../.venv/bin/python xpass.py --saida ../saidas/jogo1 --what-if
 ../.venv/bin/python extras_taticas.py --saida ../saidas/jogo1
-../.venv/bin/python anotar_passes.py roteiro --saida ../saidas/jogo1      # PENDENTE (humano): ver docs/2026-11-02-pendencias-humano.md
-../.venv/bin/python validar_passes.py --saida ../saidas/jogo1 --anotado ../saidas/jogo1/passes_anotados.csv   # PENDENTE
+../.venv/bin/python converter_anotacao.py --xlsx "posse de bola.xlsx" --saida ../saidas/jogo1   # anotação manual (xlsx) para t_s,time,sucesso
+../.venv/bin/python validar_passes.py --saida ../saidas/jogo1 --anotado ../saidas/jogo1/passes_anotados.csv
 ```
 
 Ordem diferente do roteiro: `camera` vem antes de `calibrar` porque a calibração usa marcos de **vários quadros** levados ao
@@ -188,10 +189,29 @@ A grade de 5 m reprojetada está em `saidas/jogo1/calibracao_grade.jpg`, `calibr
 em `figuras/qa_homografia/`. Os maiores erros são de `circulo_inf`, `ga_dir_sup`, `circulo_esq` e `ga_dir_sup_linha`. Nossa hipótese (não testada): o extremo horizontal da elipse do círculo não é a projeção do ponto do círculo
 que usamos como marco, e os pixels foram lidos a olho. Os três quadros ficam no **mesmo segmento** de câmera (o 9); os demais segmentos só chegam ao campo pela re-ancoragem (Q4.3). Todos os marcos
 ficam no lado de cima (longe da câmera) do campo ou no meio: **não há marcos perto da linha lateral de baixo**, então a projeção ali é extrapolada e
-menos confiável. **Resolução real: 9 marcos para 8 graus de liberdade, erro de cerca de 1 m; o que se vê nas grades é compatível, mas não validamos posições por um gabarito de campo.**
+menos confiável. **Resolução real: 9 marcos para 8 graus de liberdade, erro de cerca de 1 m.**
+Esse erro mede só a consistência dos cliques, não o encaixe do campo na imagem: com marcos só no centro, a rotação e a escala ficam mal determinadas, e a linha do meio projetada saía
+uns 20 graus fora da linha branca real (comparação em `figuras/refino_antes_depois.jpg`, amarelo antes e ciano depois).
+
+**Refino pelas linhas (`refino_linhas.py`).** Para cada segmento aprovado, uma correção `A` (8 parâmetros) encaixa o modelo completo do campo (bordas, linha do meio, círculo, áreas e arcos) nas
+linhas brancas detectadas em vários quadros do segmento (top-hat claro, só dentro do gramado e sem as caixas dos jogadores). O custo soma os pontos do modelo que caem sobre linha detectada,
+as linhas detectadas que caem perto do modelo (evita que o campo colapse em cima de poucas linhas) e uma âncora em `A = I`. O refino só vale se melhorar quadros que **não** entraram no ajuste:
+fração de pontos do modelo a menos de 3 px de uma linha detectada, em metade dos quadros do segmento ajustando na outra metade.
+
+| segmento | quadros | antes | depois |
+|---|---|---|---|
+| 8 | {{calibracao.json:refino_linhas.segmentos.8.n_quadros}} | {{arredondar(2):calibracao.json:refino_linhas.segmentos.8.inliers_teste_antes}} | {{arredondar(2):calibracao.json:refino_linhas.segmentos.8.inliers_teste_depois}} |
+| 9 | {{calibracao.json:refino_linhas.segmentos.9.n_quadros}} | {{arredondar(2):calibracao.json:refino_linhas.segmentos.9.inliers_teste_antes}} | {{arredondar(2):calibracao.json:refino_linhas.segmentos.9.inliers_teste_depois}} |
+| 10 | {{calibracao.json:refino_linhas.segmentos.10.n_quadros}} | {{arredondar(2):calibracao.json:refino_linhas.segmentos.10.inliers_teste_antes}} | {{arredondar(2):calibracao.json:refino_linhas.segmentos.10.inliers_teste_depois}} |
+| 12 | {{calibracao.json:refino_linhas.segmentos.12.n_quadros}} | {{arredondar(2):calibracao.json:refino_linhas.segmentos.12.inliers_teste_antes}} | {{arredondar(2):calibracao.json:refino_linhas.segmentos.12.inliers_teste_depois}} |
+| 19 | {{calibracao.json:refino_linhas.segmentos.19.n_quadros}} | {{arredondar(2):calibracao.json:refino_linhas.segmentos.19.inliers_teste_antes}} | {{arredondar(2):calibracao.json:refino_linhas.segmentos.19.inliers_teste_depois}} |
+| 22 | {{calibracao.json:refino_linhas.segmentos.22.n_quadros}} | {{arredondar(2):calibracao.json:refino_linhas.segmentos.22.inliers_teste_antes}} | {{arredondar(2):calibracao.json:refino_linhas.segmentos.22.inliers_teste_depois}} |
+
+Os erros por marco da tabela acima são os da calibração manual e não medem o refino; a medida do refino é a fração acima. Limites: os segmentos 12 (5 quadros) e 19 têm pouca linha visível
+e ganharam menos; o círculo central ainda sai um pouco maior que o real em alguns quadros (a olho, não medido, causa não investigada); e não validamos posições em metros contra um gabarito de campo.
 
 **Q4.3. `H0 · G_t`, deriva e re-ancoragem.** `G_t` leva o quadro `t` ao quadro de referência (ORB + RANSAC só no gramado, sem jogadores e placar, casando com um
-quadro-chave) e `H0` leva o quadro de referência a metros; a posição é `H0 · G_t · [u, v, 1]`. Como a câmera só gira e dá zoom, `G_t` é uma homografia pura entre quadros.
+quadro-chave) e `H0` leva o quadro de referência a metros; a posição é `H0 · G_t · [u, v, 1]` (nos segmentos com refino aceito, `H0` é trocado pelo `H` do segmento; `homografia.projecao_por_quadro` é o único lugar que faz essa escolha). Como a câmera só gira e dá zoom, `G_t` é uma homografia pura entre quadros.
 Deriva: cada troca de quadro-chave soma erro. Medimos a deriva de forma **indireta**: o marco `circulo_esq` foi lido em dois quadros distantes (1366 e 1650) e os dois erros de reprojeção da tabela acima (linhas `circulo_esq`) ficam em torno de 1 m, e as grades de
 `figuras/qa_homografia/` seguem batendo com as linhas minutos depois (segmento 22, por volta de 5 min), mas não calculamos uma curva de deriva. **O que fizemos de re-ancoragem**: em cada corte (queda de correlação de histograma) começa um novo segmento; ele só vale se casar com quadros-chave de segmentos anteriores
 (ORB na cena toda abaixo do placar, não só no gramado, porque o gramado é repetitivo e a cena parada dá muito mais pontos) com pelo menos 80 inliers e uma homografia plausível.
@@ -227,12 +247,19 @@ já usa para descartar saltos. Conclusão: velocidades plausíveis, distâncias 
 Subir o raio de 1 para 3 m **dobra** o número de passes detectados ({{sensibilidade_raio.csv:raio_posse_m=1.0:passes}} para {{sensibilidade_raio.csv:raio_posse_m=3.0:passes}}) e mexe pouco na posse (time 0 entre {{sensibilidade_raio.csv:raio_posse_m=2.0:posse_time0_pct}}% e
 {{sensibilidade_raio.csv:raio_posse_m=1.0:posse_time0_pct}}%): a posse é robusta ao raio, o número de passes não. Com uma bola e uma projeção tão ruidosas, o raio de 1 m perde toques e o de 3 m cria passes entre jogadores que só estão perto da bola.
 
-**Q5.3. Validação manual dos passes. PENDENTE.** Não temos `passes_anotados.csv`. O que a pessoa precisa fazer:
-`python anotar_passes.py roteiro --saida ../saidas/jogo1` (lista os trechos ao vivo a anotar) e `python anotar_passes.py passear --saida ../saidas/jogo1` (player que marca o instante do passe com a tecla `p`,
-o time e o resultado), **sem olhar `passes.csv` antes**. Formato: `t_s,time,sucesso` (`t_s` em segundos do clipe; `time` 0 = amarelo/Brasil, 1 = vermelho/Marrocos como no `rastreado.mp4`; `sucesso` 1 = completou, 0 = errou).
-Depois: `python validar_passes.py --saida ../saidas/jogo1 --anotado ../saidas/jogo1/passes_anotados.csv`. Resultado esperado a registrar aqui: precisão, revocação, F1 (`validacao_passes.json`) e os erros dominantes
-(`validacao_erros.csv`). O detector achou {{metricas_times.json:time0.passes}} + {{metricas_times.json:time1.passes}} passes, dos quais {{xp_resumo.json:pct_certos}}% como "certos"; uma taxa tão abaixo do que se espera de passes
-completados em jogo ({{arredondar(0):xp_resumo.json:pct_certos}}% contra algo perto de 80%) já indica que o detector **marca perda de posse onde não houve** (ruído da bola e do dono mais próximo). Isso é uma hipótese a confirmar com a anotação.
+**Q5.3. Validação manual dos passes.** O grupo anotou os passes assistindo ao clipe, em `posse de bola.xlsx` (horário do vídeo e uma frase por evento), sem olhar `passes.csv`. A planilha foi convertida por `converter_anotacao.py`:
+o Excel leu "20:19" como 20 h 19 min, então o horário foi reinterpretado como minuto:segundo do vídeo e passado para o relógio do clipe (menos 20:00). Regras literais: "passa pra outro X" vale como passe completado do time X,
+"passa pra outro X ... Y intercepta" vale como passe falho, e chute a gol, tiro de meta, roubo, interceptação, domínio, posse, falta e disputa **não** entram como passe. Linhas idênticas foram colapsadas. Resultado: `passes_anotados.csv`
+(`t_s,time,sucesso`) e a tabela completa de eventos em `anotacao_eventos.csv`. Em seguida, `validar_passes.py` com tolerância de {{validacao_passes.json:tolerancia_s}} s e só quadros válidos:
+
+| detectados | anotados (em quadros válidos) | casados | precisão | revocação | F1 | acordo certo/errado nos casados |
+|---|---|---|---|---|---|---|
+| {{validacao_passes.json:detectados}} | {{validacao_passes.json:anotados}} | {{validacao_passes.json:casados}} | {{arredondar(2):validacao_passes.json:precisao}} | {{arredondar(2):validacao_passes.json:revocacao}} | {{arredondar(2):validacao_passes.json:f1}} | {{arredondar(2):validacao_passes.json:acordo_certo_errado_nos_casados}} |
+
+São {{validacao_passes.json:falsos_positivos}} falsos positivos (passe detectado sem passe anotado) e {{validacao_passes.json:falsos_negativos}} falsos negativos (passe anotado sem detecção), listados em `validacao_erros.csv`.
+O detector achou {{metricas_times.json:time0.passes}} + {{metricas_times.json:time1.passes}} passes, dos quais {{xp_resumo.json:pct_certos}}% como "certos", bem abaixo do que se espera de passes
+completados em jogo (algo perto de 80%): isso é compatível com um detector que **marca perda de posse onde não houve** (ruído da bola e do dono mais próximo), mas não separamos os tipos de erro um a um, então fica como hipótese.
+Limites da validação: o gabarito é de uma pessoa, sem segunda anotação; quase todos os passes anotados do Brasil estão marcados como completados; e a anotação tem horário em segundos inteiros, contra tolerância de {{validacao_passes.json:tolerancia_s}} s no casamento.
 
 **Q5.4. Direção de ataque, trocas de ID e jogadores fora do quadro.** O código estimou que o time 0 ataca para a **direita** e o time 1 para a esquerda (`metricas_times.json`), e **não conseguimos confirmar** isso nos quadros:
 os dois goleiros que apareceram (um de azul-claro no gol da direita, um de escuro no da esquerda) não identificamos de que time são, e a posição média dos times (`tracks_campo.csv`)
@@ -293,14 +320,14 @@ Todas calculadas só de `tracks_campo.csv`, `passes.csv` e `posse_por_quadro.csv
 | (a) Controle de campo (Voronoi) | time 0: {{extras_resumo.json:controle_campo.media_time0_pct}}%, time 1: {{extras_resumo.json:controle_campo.media_time1_pct}}% da área visível ({{extras_resumo.json:controle_campo.amostras}} amostras) | `controle_campo.png` | só conta a área que a câmera mostra e só jogadores visíveis; assume que o jogador mais próximo "controla" a célula (sem velocidade); jogadores não detectados viram espaço livre falso |
 | (b) Compacidade | área do envoltório: time 0 {{extras_resumo.json:compacidade.time0.area_hull_media_m2}} m², time 1 {{extras_resumo.json:compacidade.time1.area_hull_media_m2}} m²; largura {{extras_resumo.json:compacidade.time0.largura_media_m}} e {{extras_resumo.json:compacidade.time1.largura_media_m}} m; profundidade {{extras_resumo.json:compacidade.time0.profundidade_media_m}} e {{extras_resumo.json:compacidade.time1.profundidade_media_m}} m | `compacidade.png` | subestima o time inteiro (só vê quem está no quadro; goleiro e jogadores cortados ficam de fora) e um erro de classificação de time estica o envoltório |
 | (c) Pressão | adversário mais próximo do portador, mediana: time 0 com a bola {{extras_resumo.json:pressao.time0_com_bola.dist_adv_mediana_m}} m, time 1 com a bola {{extras_resumo.json:pressao.time1_com_bola.dist_adv_mediana_m}} m | `pressao.png` | depende de saber quem é o portador, que depende da bola (Q4.1) e do ID do dono; o portador pode ser um falso dono |
-| (d) Rede de passes e progressivos | {{extras_resumo.json:passes_progressivos.progressivos}} passes progressivos (ganho de pelo menos {{extras_resumo.json:passes_progressivos.limiar_m}} m ao gol) em {{extras_resumo.json:passes_progressivos.passes}}, dos quais {{extras_resumo.json:passes_progressivos.progressivos_certos}} completados | `rede_passes.png` | passes e ids são os do detector (Q5.3 pendente), nós da rede são fragmentos de jogador, não jogadores |
+| (d) Rede de passes e progressivos | {{extras_resumo.json:passes_progressivos.progressivos}} passes progressivos (ganho de pelo menos {{extras_resumo.json:passes_progressivos.limiar_m}} m ao gol) em {{extras_resumo.json:passes_progressivos.passes}}, dos quais {{extras_resumo.json:passes_progressivos.progressivos_certos}} completados | `rede_passes.png` | passes e ids são os do detector (precisão e revocação em Q5.3), nós da rede são fragmentos de jogador, não jogadores |
 
 Os mapas de calor por time, o mapa de passes e a linha do tempo de posse estão em `figuras/mapa_calor_times.png`, `mapa_passes.png` e `posse_linha_tempo.png`.
 
 ## 11. O que falta e o que é fraco
 
-- **PENDENTE (humano):** anotação de passes e a validação (Q5.3), emails dos 6 integrantes, quem apresenta, criar o repositório e fazer push, link do Drive, slides (.pptx e Google Slides). Ver `docs/2026-11-02-pendencias-humano.md`.
+- **PENDENTE (humano):** e-mails dos 6 integrantes, quem apresenta, link do Drive, slides (.pptx e Google Slides). Ver `docs/2026-11-02-pendencias-humano.md`.
 - **Q2.4 não feita** (sem `ROBOFLOW_API_KEY`).
 - **Fraco, dito sem enfeite:** {{camera_info.json:pct_validos_apos_qa}}% do clipe virou dado; a bola é pouco confiável (Q4.1); passes e eXP saem desse ruído; a direção de ataque não está confirmada; a projeção
-  não tem marcos perto da lateral de baixo; ids fragmentados.
+  não tem marcos perto da lateral de baixo e o refino pelas linhas é fraco nos segmentos 12 e 19; ids fragmentados.
 - Código de referência: `soccermap_mini.py` (desafio extra, fora do escopo) só recebeu anotações de tipo, não foi executado.

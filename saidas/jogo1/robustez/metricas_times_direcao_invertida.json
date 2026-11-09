@@ -5,29 +5,29 @@
     "0": "esquerda",
     "1": "direita"
   },
-  "quadros_com_bola": 3432,
+  "quadros_com_bola": 3383,
   "quadros_total": 10800,
   "quadros_validos": 4672,
-  "tracks_com_time": 707,
+  "tracks_com_time": 684,
   "plausibilidade": {
-    "tracks_ate_10s_ou_mais": 61,
-    "mediana_m_por_min": 182.5,
-    "p90_m_por_min": 220.0,
-    "mediana_vel_max_ms": 5.67,
-    "max_vel_max_ms": 8.86
+    "tracks_ate_10s_ou_mais": 60,
+    "mediana_m_por_min": 174.7,
+    "p90_m_por_min": 206.3,
+    "mediana_vel_max_ms": 5.56,
+    "max_vel_max_ms": 8.93
   },
   "time0": {
-    "posse_pct": 57.5,
-    "passes": 41,
-    "passes_certos": 19,
-    "precisao_pct": 46.3,
-    "distancia_total": 3690.7
+    "posse_pct": 55.8,
+    "passes": 42,
+    "passes_certos": 21,
+    "precisao_pct": 50.0,
+    "distancia_total": 3586.3
   },
   "time1": {
-    "posse_pct": 42.5,
-    "passes": 32,
-    "passes_certos": 11,
-    "precisao_pct": 34.4,
-    "distancia_total": 2861.7
+    "posse_pct": 44.2,
+    "passes": 30,
+    "passes_certos": 10,
+    "precisao_pct": 33.3,
+    "distancia_total": 2795.0
   }
 }

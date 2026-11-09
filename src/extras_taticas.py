@@ -35,7 +35,7 @@ from matplotlib.path import Path as MplPath
 from scipy.spatial import ConvexHull, QhullError
 
 from campo import COMPRIMENTO, LARGURA, desenhar_campo
-from homografia import aplicar_h
+from homografia import aplicar_h, projecao_por_quadro
 from metricas import CORES_TIME, carregar_jogadores
 
 Mat = npt.NDArray[np.float64]
@@ -43,16 +43,16 @@ PASSO = 10          # amostra 1 quadro a cada PASSO (3 amostras/s a 30 fps)
 ROI_TOPO = 0.27     # fração superior da imagem ignorada (arquibancada/placas)
 
 
-def campo_visivel(H0: Mat, G: Mat, W: int, H: int) -> MplPath | None:
+def campo_visivel(Ht: Mat, W: int, H: int) -> MplPath | None:
     """Polígono (em metros) da parte do campo que a câmera enxerga neste quadro."""
     cantos = np.array([[0, ROI_TOPO * H], [W, ROI_TOPO * H], [W, H], [0, H]], dtype=float)
-    poli = aplicar_h(H0 @ G, cantos)
+    poli = aplicar_h(Ht, cantos)
     if not np.isfinite(poli).all() or np.abs(poli).max() > 1e4:
         return None
     return MplPath(poli)
 
 
-def controle_e_compacidade(jog: pd.DataFrame, qv: pd.DataFrame, H0: Mat, G: Mat,
+def controle_e_compacidade(jog: pd.DataFrame, qv: pd.DataFrame, Ht_todos: Mat,
                            W: int, H: int, fps: float) -> tuple[pd.DataFrame, pd.DataFrame, Mat]:
     gx, gy = np.meshgrid(np.arange(0.5, COMPRIMENTO, 1.0), np.arange(0.5, LARGURA, 1.0))
     celulas = np.c_[gx.ravel(), gy.ravel()]
@@ -82,7 +82,7 @@ def controle_e_compacidade(jog: pd.DataFrame, qv: pd.DataFrame, H0: Mat, G: Mat,
         # (a) Voronoi restrito ao campo visível
         if len(p0) < 3 or len(p1) < 3:
             continue
-        poli = campo_visivel(H0, G[int(f)], W, H)
+        poli = campo_visivel(Ht_todos[int(f)], W, H)
         if poli is None:
             continue
         dentro = poli.contains_points(celulas)
@@ -215,15 +215,14 @@ def main() -> None:
 
     meta = json.loads((pasta / "meta.json").read_text())
     fps = float(meta["fps"])
-    H0 = np.array(json.loads((pasta / "calibracao.json").read_text())["H0"])
-    G = np.load(pasta / "camera.npy")
+    Ht_todos = projecao_por_quadro(pasta)
     qv = pd.read_csv(pasta / "quadros_validos.csv")
     jog = carregar_jogadores(pasta)
     passes = pd.read_csv(pasta / "passes.csv")
     posse = pd.read_csv(pasta / "posse_por_quadro.csv")
     direcao = json.loads((pasta / "metricas_times.json").read_text())["direcao_ataque"]
 
-    ctrl, comp, mapa = controle_e_compacidade(jog, qv, H0, G, int(meta["largura"]), int(meta["altura"]), fps)
+    ctrl, comp, mapa = controle_e_compacidade(jog, qv, Ht_todos, int(meta["largura"]), int(meta["altura"]), fps)
     ctrl.to_csv(pasta / "controle_campo.csv", index=False)
     comp.to_csv(pasta / "compacidade.csv", index=False)
     pr = pressao(jog, posse)

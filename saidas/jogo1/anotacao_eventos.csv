@@ -1,0 +1,82 @@
+t_video,t_s,time,tipo,sucesso,texto_original
+20:19,19,1,tiro_de_meta,,marrocos goleiro chuta
+20:29,29,0,roubo_ou_interceptacao,,brasil rouba bola
+20:31,31,0,passe,1.0,brasileiro passa pra outro basileiro
+20:34,34,0,passe,1.0,brasileiro passa pra outro basileiro
+20:36,36,1,passe,1.0,marrocos rouba bola e passa pra outro morroquino
+20:41,41,1,passe,1.0,marrocos passa pra outro marroquino
+20:45,45,1,passe,1.0,marrocos passa pra outro marroquino
+20:50,50,1,passe,1.0,marrocos passa pra outro marroquino
+20:51,51,1,passe,1.0,marrocos passa pra outro marroquino
+20:54,54,1,passe,1.0,marrocos passa pra outro marroquino
+20:56,56,1,passe,1.0,marrocos passa pra outro marroquino
+20:58,58,1,passe,0.0,marrocos passa pra outro marroquino brasileiro intercepta
+21:00,60,0,posse,,brasileiro domina bola
+21:07,67,0,passe,1.0,brasileiro passa pra outro basileiro
+21:12,72,0,passe,1.0,brasileiro passa pra outro basileiro
+21:14,74,0,passe,1.0,brasileiro passa pra outro basileiro
+21:16,76,0,passe,1.0,brasileiro passa pra outro basileiro
+21:18,78,0,passe,1.0,brasileiro passa pra outro basileiro
+21:21,81,0,passe,1.0,brasileiro passa pra outro basileiro
+21:24,84,0,passe,1.0,brasileiro passa pra outro basileiro
+21:28,88,0,passe,1.0,brasileiro passa pra outro basileiro
+21:32,92,0,passe,1.0,brasileiro passa pra outro basileiro
+21:35,95,1,passe,1.0,marrocos rouba bola e passa pra outro morroquino
+21:36,96,0,roubo_ou_interceptacao,,brasileiro intercepta
+21:38,98,1,passe,1.0,marrocos rouba bola e passa pra outro morroquino
+21:40,100,0,roubo_ou_interceptacao,,brasileiro intercepta
+21:42,102,0,passe,1.0,brasileiro passa pra outro basileiro
+21:44,104,0,passe,1.0,brasileiro passa pra outro basileiro
+21:46,106,0,chute_a_gol,,brasileiro chuta pra gol marroquino domina
+21:49,109,1,passe,1.0,marrocos passa pra outro marroquino
+21:53,113,1,passe,1.0,marrocos passa pra outro marroquino
+21:56,116,1,passe,1.0,marrocos passa pra outro marroquino
+22:03,123,1,passe,1.0,marrocos passa pra outro marroquino
+22:05,125,1,passe,1.0,marrocos passa pra outro marroquino
+22:06,126,1,chute_a_gol,,marrocos chuta pra gol brasileiro intercepta
+22:10,130,0,disputa,,marroquino e brasileiro brigam por bola brasileiro cai
+22:52,172,0,falta,,cobrança de falta para o brasil
+22:56,176,0,passe,1.0,brasileiro passa pra outro basileiro
+23:01,181,0,passe,1.0,brasileiro passa pra outro basileiro (goleiro)
+23:03,183,0,passe,1.0,brasileiro(goleiro) passa pra outro basileiro
+23:09,189,0,passe,1.0,brasileiro passa pra outro basileiro
+23:12,192,0,passe,1.0,brasileiro passa pra outro basileiro
+23:12,192,1,roubo_ou_interceptacao,,marrocos intercepta e rouba bola
+23:17,197,1,passe,1.0,marrocos passa pra outro marroquino
+23:20,200,0,roubo_ou_interceptacao,,brasil intercepta e rouba bola
+23:22,202,1,falta,,marrocos tenta roubo de bola termina com falta
+23:47,227,0,passe,1.0,brasileiro (goleiro) com bola passa pra outro brasileiro
+23:53,233,0,passe,1.0,brasileiro passa pra outro basileiro (goleiro)
+23:56,236,0,passe,1.0,brasileiro (goleiro) com bola passa pra outro brasileiro
+24:00,240,0,passe,1.0,brasileiro passa pra outro basileiro
+24:03,243,1,roubo_ou_interceptacao,,marrocos intercepta e rouba bola
+24:05,245,1,passe,1.0,marrocos passa pra outro marroquino
+24:08,248,1,passe,1.0,marrocos passa pra outro marroquino
+24:12,252,1,passe,1.0,marrocos passa pra outro marroquino
+24:14,254,1,passe,1.0,marrocos passa pra outro marroquino
+24:18,258,1,passe,1.0,marrocos passa pra outro marroquino
+24:21,261,1,passe,1.0,marrocos passa pra outro marroquino
+24:23,263,1,passe,1.0,marrocos passa pra outro marroquino
+24:27,267,1,passe,1.0,marrocos passa pra outro marroquino
+24:29,269,1,passe,1.0,marrocos passa pra outro marroquino
+24:30,270,1,passe,1.0,marrocos passa pra outro marroquino
+24:34,274,1,passe,1.0,marrocos passa pra outro marroquino
+24:37,277,1,passe,1.0,marrocos passa pra outro marroquino
+24:41,281,1,passe,1.0,marrocos passa pra outro marroquino
+24:43,283,1,passe,1.0,marrocos passa pra outro marroquino
+24:49,289,1,passe,1.0,marrocos passa pra outro marroquino
+24:53,293,1,passe,1.0,marrocos passa pra outro marroquino
+24:57,297,1,passe,1.0,marrocos passa pra outro marroquino
+24:59,299,0,roubo_ou_interceptacao,,brasileiro intercepta
+25:01,301,0,passe,1.0,brasileiro passa pra outro brasileiro
+25:03,303,0,passe,1.0,brasileiro passa pra outro brasileiro
+25:04,304,0,disputa,,brasileiro e marroquino brigam por bola brasileiro cai
+25:24,324,0,posse,,brasileiro com bola
+25:28,328,0,passe,1.0,brasileiro passa pra outro brasileiro
+25:33,333,0,passe,1.0,brasileiro passa pra outro brasileiro
+25:39,339,0,passe,1.0,brasileiro passa pra outro brasileiro
+25:42,342,0,passe,1.0,brasileiro passa pra outro brasileiro
+25:47,347,0,roubo_ou_interceptacao,,marroquino rouba a bola brasileiro cai
+25:57,357,0,posse,,brasileiro com posse da bola
+25:59,359,0,passe,1.0,brasileiro passa pra outro brasileiro
+26:00,360,0,passe,1.0,brasileiro passa pra outro brasileiro

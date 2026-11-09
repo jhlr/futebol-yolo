@@ -14,3 +14,4 @@ scikit-learn>=1.5.0         # K-Means (times) e regressão logística (eXP)
 matplotlib>=3.8.0           # campo, mapas de calor e superfícies de eXP
 tqdm>=4.66.0
 scipy>=1.11.0           # envoltório convexo (extras_taticas.py)
+openpyxl>=3.1.0

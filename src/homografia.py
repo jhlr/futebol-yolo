@@ -83,6 +83,26 @@ def _carregar_camera(pasta: Path) -> Mat | None:
     return np.load(arq) if arq.exists() else None
 
 
+def projecao_por_quadro(pasta: Path, com_refino: bool = True) -> Mat:
+    """Dono único de "pixel do quadro t → metros": array (N, 3, 3), NaN nos quadros inválidos.
+
+    É `H0 @ G_t`, com o H do segmento no lugar de H0 nos segmentos cujo refino pelas
+    linhas do campo foi aceito (`refino_linhas.py`). Quem projeta, desenha grade ou
+    calcula área visível deve chamar esta função em vez de combinar H0 e G à mão.
+    """
+    cal = json.loads((pasta / "calibracao.json").read_text())
+    G = np.load(pasta / "camera.npy")
+    H = np.array(cal["H0"], dtype=np.float64) @ G
+    refino = cal.get("refino_linhas")
+    if com_refino and refino:
+        seg = pd.read_csv(pasta / "quadros_validos.csv")["segmento"].to_numpy()
+        for s, r in refino["segmentos"].items():
+            if r["aceito"]:
+                idx = seg == int(s)
+                H[idx] = np.array(r["H"], dtype=np.float64) @ G[idx]
+    return np.asarray(H, dtype=np.float64)
+
+
 # ── 1. Movimento da câmera (com segmentos, quadros inválidos e re-ancoragem) ──
 
 def _mascara(frame: np.ndarray, caixas: npt.NDArray[np.float64], margem_placar: float) -> np.ndarray:
@@ -522,15 +542,15 @@ def qa_segmentos(pasta: Path, H0: Mat, G: Mat, minimo: float = 0.7) -> None:
 
 def projetar(pasta: Path, sem_camera: bool) -> None:
     H0 = np.array(json.loads((pasta / "calibracao.json").read_text())["H0"])
-    G = None if sem_camera else _carregar_camera(pasta)
+    Ht_todos = None if sem_camera else projecao_por_quadro(pasta)
 
     def para_campo(df: pd.DataFrame) -> pd.DataFrame:
         df = df.copy()
         xy = np.full((len(df), 2), np.nan)
         for f, idx in df.groupby("frame").indices.items():
-            if G is not None and (f >= len(G) or np.isnan(G[f]).any()):
+            if Ht_todos is not None and (f >= len(Ht_todos) or np.isnan(Ht_todos[f]).any()):
                 continue    # quadro inválido (replay, close-up, sem âncora): sem projeção
-            Ht = H0 if G is None else H0 @ G[f]
+            Ht = H0 if Ht_todos is None else Ht_todos[f]
             xy[idx] = aplicar_h(Ht, df.iloc[idx][["px", "py"]].to_numpy())
         df["x_m"], df["y_m"] = xy[:, 0], xy[:, 1]
         # Descarta pontos muito fora do campo (erros de projeção/detecções na arquibancada)
